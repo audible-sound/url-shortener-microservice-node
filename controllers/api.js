@@ -5,9 +5,12 @@ class ApiController {
   static postUrl(req, res) {
     const { url } = req.body;
     const { host } = URL.parse(url);
+    if (host === null) res.status(400).send({ error: "invalid url" });
     dns.lookup(host, async (err) => {
       try {
-        if (err || host === null) throw new Error("invalid url");
+        if (err) {
+          throw new Error("invalid url");
+        }
         const url_instance = new Url(url);
         const result = await url_instance.createShortUrl();
         res.status(200).send({
@@ -15,7 +18,6 @@ class ApiController {
           short_url: result.short_url,
         });
       } catch (error) {
-        console.log(err);
         let code = 500;
         let message = err;
         if (error.message === "invalid url") {
