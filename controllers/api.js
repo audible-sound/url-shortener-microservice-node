@@ -7,7 +7,7 @@ class ApiController {
     const { host } = URL.parse(url);
     dns.lookup(host, async (err) => {
       try {
-        if (err) throw new Error("invalid url");
+        if (err || host === null) throw new Error("invalid url");
         const url_instance = new Url(url);
         const result = await url_instance.createShortUrl();
         res.status(200).send({
